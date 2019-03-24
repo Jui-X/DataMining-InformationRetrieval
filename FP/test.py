@@ -4,18 +4,22 @@
 # Date: 2018/5/20 0:41
 '''
 
+import sys, getopt
+
 
 def load_data_set():
-    data_set = [['e1', 'e2', 'e5'],
-                ['e2', 'e4'],
-                ['e2', 'e3'],
-                ['e1', 'e2', 'e4'],
-                ['e1', 'e3'],
-                ['e2', 'e3'],
-                ['e1', 'e3'],
-                ['e1', 'e2', 'e3', 'e5'],
-                ['e1', 'e2', 'e3']]
-    return data_set
+    transactions = []
+    with open("homework1-1.txt") as f:
+        content = f.readlines()
+        for lines in content:
+            line = lines.strip('\n')
+            nums = line.split(' ')
+            num = frozenset(nums)
+            transactions.append(num)
+
+    f.close()
+
+    return transactions
 
 
 def Create_C1(data_set):
@@ -177,3 +181,14 @@ if __name__ == "__main__":
     # print("Rules")
     # for item in rule_list:
     #     print(item[0], "=>", item[1], "'s conf: ", item[2])
+
+    try:
+        args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+    except getopt.GetoptError:
+        print('command args error!')
+        sys.exit(2)
+
+    min_sup = args[0]
+    min_conf = args[1]
+    input_filename = args[2]
+    output_filename = args[3]
