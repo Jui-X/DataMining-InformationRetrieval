@@ -100,14 +100,13 @@ def Apriori_output(Lk, output):
     worksheet.write('L1', '频繁12项集', bold_format)
     worksheet.write('M1', '频繁13项集', bold_format)
 
-
     # 从第一行开始，写入0 1两列
     row = 1
     col = 0
     for L in Lk:
         row = 1
-        for frequent_ietm in L:
-            worksheet.write_string(row, col, str(frequent_ietm))
+        for frequent_item in L:
+            worksheet.write_string(row, col, str(frequent_item))
             row += 1
         col += 1
 
