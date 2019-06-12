@@ -2,6 +2,8 @@ import xlsxwriter, xlrd
 import numpy as np
 import math
 
+from Project2 import biLSTM
+
 
 def data_pre_process():
     raw_data = xlrd.open_workbook("output/output.xlsx")

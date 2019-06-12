@@ -1,6 +1,8 @@
 import os
 import re
 import jieba
+import fool
+
 
 from keras.layers import Dense
 from keras.models import Sequential
@@ -137,7 +139,7 @@ def insurance_match(dataset):
 
         file_name.append(data[-1])
 
-        age_re = u"投保年龄为[\u4e00-\u9fa5]+至[\u4e00-\u9fa5]+。"
+        age_re = u"\u6295\u4fdd\u5e74\u9f84\u4e3a[\u0030-\u0039]+\u5468\u5c81\u81f3[\u0030-\u0039]+\u5468\u5c81"
         r = re.compile(age_re)
         flag = False
         for line in data:
@@ -146,16 +148,15 @@ def insurance_match(dataset):
                 age = age.group(0).split("为")[1].split("至")
                 min_age = age[0]
                 max_age = age[1].strip("。")
-                insurance_max_age.append(min_age)
-                insurance_min_age.append(max_age)
+                insurance_min_age.append(min_age)
+                insurance_max_age.append(max_age)
                 flag = True
                 break
         if not flag:
             insurance_max_age.append("无")
             insurance_min_age.append("无")
 
-
-        period_re = u"保险期间[\u4e00-\u9fa5]+为[\u4e00-\u9fa5]+(，?)(。?)"
+        period_re = u"\u4fdd\u9669\u671f\u95f4\u4e3a[\u0030-\u0039]*[\u4e00-\u9fa5]*(。?)(，?)"
         r = re.compile(period_re)
         flag = False
         for line in data:
@@ -200,9 +201,16 @@ def insurance_match(dataset):
     return insurance_info
 
 
+def foolnltk(dataset):
+    # for data in dataset:
+    for line in dataset:
+        words, ners = fool.analysis(line)
+        print(ners)
+        # break
+
 
 def write_to_csv(output):
-    with open("output.csv", "w", encoding="utf8") as f:
+    with open("output.csv", "w") as f:
         f.write("保单文件名, 产品类型, 产品名称, 产品交费方式, 产品条款文字编码" + "\n")
         for line in output:
             line = str(line)
@@ -225,7 +233,8 @@ def write_to_csv(output):
 if __name__ == '__main__':
     dataset = load_data()
 
-    # output = product_match(dataset)
-    output = insurance_match(dataset)
+    output = product_match(dataset)
+    # output = insurance_match(dataset)
 
     write_to_csv(output)
+    # foolnltk(dataset)
