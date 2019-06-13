@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import numpy as np
 
 from keras.preprocessing import sequence
@@ -15,6 +16,11 @@ if __name__ == "__main__":
     batch_size = 32
 
     print('Loading data...')
+    # save np.load
+    np_load_old = np.load
+
+    # modify the default parameters of np.load
+    np.load = lambda *a, **k: np_load_old(*a, allow_pickle=True, **k)
     (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
     print(len(x_train), 'train sequences')
     print(len(x_test), 'test sequences')

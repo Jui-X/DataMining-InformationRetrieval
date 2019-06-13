@@ -24,13 +24,13 @@ def load_data():
         lines = f.readlines()
         for line in lines:
             text = line.split("\t")
-            x_train.append(text[3])
+            x_train.append(text[3].strip("\n"))
             y_train.append(text[2])
-    with open("data/validation.ss", "r", encoding="utf8") as f:
+    with open("data/validation_set.ss", "r", encoding="utf8") as f:
         lines = f.readlines()
         for line in lines:
             text = line.split("\t")
-            x_test.append(text[3])
+            x_test.append(text[3].strip("\n"))
             y_test.append(text[2])
     return (x_train, y_train), (x_test, y_test)
 
