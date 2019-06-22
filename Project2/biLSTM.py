@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import numpy as np
 
 from keras.preprocessing import sequence
@@ -7,36 +8,20 @@ from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional
 from keras.datasets import imdb
 
 
-MAX_FEATURES = 20000
-# cut texts after this number of words
-# (among top max_features most common words)
-maxlen = 100
-BATCH_SIZE = 32
+if __name__ == "__main__":
+    max_features = 20000
+    # cut texts after this number of words
+    # (among top max_features most common words)
+    maxlen = 100
+    batch_size = 32
 
-
-def load_data():
     print('Loading data...')
-    x_train = []
-    y_train = []
-    x_test = []
-    y_test = []
-    with open("data/training_set.ss", "r", encoding="utf8") as f:
-        lines = f.readlines()
-        for line in lines:
-            text = line.split("\t")
-            x_train.append(text[3].strip("\n"))
-            y_train.append(text[2])
-    with open("data/validation_set.ss", "r", encoding="utf8") as f:
-        lines = f.readlines()
-        for line in lines:
-            text = line.split("\t")
-            x_test.append(text[3].strip("\n"))
-            y_test.append(text[2])
-    return (x_train, y_train), (x_test, y_test)
+    # save np.load
+    np_load_old = np.load
 
-
-def biLSTM():
-    (x_train, y_train), (x_test, y_test) = load_data()
+    # modify the default parameters of np.load
+    np.load = lambda *a, **k: np_load_old(*a, allow_pickle=True, **k)
+    (x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
     print(len(x_train), 'train sequences')
     print(len(x_test), 'test sequences')
 
@@ -49,7 +34,7 @@ def biLSTM():
     y_test = np.array(y_test)
 
     model = Sequential()
-    model.add(Embedding(MAX_FEATURES, 128, input_length=maxlen))
+    model.add(Embedding(max_features, 128, input_length=maxlen))
     model.add(Bidirectional(LSTM(64)))
     model.add(Dropout(0.5))
     model.add(Dense(1, activation='sigmoid'))
@@ -59,10 +44,6 @@ def biLSTM():
 
     print('Train...')
     model.fit(x_train, y_train,
-              batch_size=BATCH_SIZE,
+              batch_size=batch_size,
               epochs=4,
               validation_data=[x_test, y_test])
-
-
-if __name__ == "__main__":
-    biLSTM()
